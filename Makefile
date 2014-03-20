@@ -7,6 +7,8 @@ OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
 BINARY = avrsynth.elf
 SRC += avrsynth.c
+PORT = /dev/tty.SLAB_USBtoUART
+#PORT = /dev/ttyUSB0
 else
 CFLAGS += -g
 LDFLAGS += -lm -g
@@ -45,7 +47,7 @@ obj: $(OBJ)
 ifeq ($(TARGET),avr)
 burn: avrsynth.hex
 	@read -p 'press enter when ready to burn: '
-	avrdude -P /dev/ttyUSB0 -p m328p -c arduino -v -v -U flash:w:avrsynth.hex
+	avrdude -P $(PORT) -p m328p -c arduino -v -v -U flash:w:avrsynth.hex
 else
 burn:
 	@echo error: burn is for avr only!
