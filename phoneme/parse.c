@@ -1,12 +1,24 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
+
+#include "phoneme.h"
+#include "saynum.h"
+#include "spellword.h"
 
 #define MAX_LENGTH 128
 
 static FILE *In_file;
 static FILE *Out_file;
 
-static int Char, Char1, Char2, Char3;
+static int Chars[4];
+static void xlate_file(void);
+
+#define Char  Chars[0]
+#define Char1 Chars[1]
+#define Char2 Chars[2]
+#define Char3 Chars[3]
 
 /*
 ** main(argc, argv)
@@ -17,9 +29,7 @@ static int Char, Char1, Char2, Char3;
 **	and output)  and translates the input file to phoneme codes
 **	(see ENGLISH.C) on the output file.
 */
-main(argc, argv)
-	int argc;
-	char *argv[];
+int main(int argc, char *argv[])
 	{
 	if (argc > 3)
 		{
@@ -59,24 +69,16 @@ main(argc, argv)
 		Out_file = stdout;
 
 	xlate_file();
+	return 0;
 	}
 
-outstring(string)
-	char *string;
-	{
-	while (*string != '\0')
-		outchar(*string++);
-	}
-
-outchar(chr)
-	int chr;
+void outchar(int chr)
 	{
 	fputc(chr,Out_file);
 	}
 
 
-int makeupper(character)
-	int character;
+static int makeupper(int character)
 	{
 	if (islower(character))
 		return toupper(character);
@@ -84,7 +86,7 @@ int makeupper(character)
 		return character;
 	}
 
-new_char()
+static int new_char(void)
 	{
 	/*
 	If the cache is full of newline, time to prime the look-ahead
@@ -140,13 +142,18 @@ new_char()
 	return Char;
 	}
 
+static void have_letter(void);
+static void have_number(void);
+static void have_dollars(void);
+static void have_special(void);
+
 /*
 ** xlate_file()
 **
 **	This is the input file translator.  It sets up the first character
 **	and uses it to determine what kind of text follows.
 */
-xlate_file()
+static void xlate_file(void)
 	{
 	/* Prime the queue */
 	Char = '\n';
@@ -170,9 +177,9 @@ xlate_file()
 		}
 	}
 
-have_dollars()
+static void have_dollars(void)
 	{
-	long int value;
+	unsigned long value;
 
 	value = 0L;
 	for (new_char() ; isdigit(Char) || Char == ',' ; new_char())
@@ -189,9 +196,9 @@ have_dollars()
 	if (Char != '.' || !isdigit(Char1))
 		{
 		if (value == 1L)
-			outstring("dAAlER ");
+			xlate_word(" DOLLAR ");
 		else
-			outstring("dAAlAArz ");
+			xlate_word(" DOLLARS ");
 		return;
 		}
 
@@ -203,9 +210,9 @@ have_dollars()
 	if (isdigit(Char1) && !isdigit(Char2))
 		{
 		if (value == 1L)
-			outstring("dAAlER ");
+			xlate_word(" DOLLAR ");
 		else
-			outstring("dAAlAArz ");
+			xlate_word(" DOLLARS ");
 		if (Char == '0' && Char1 == '0')
 			{
 			new_char();	/* Skip tens digit */
@@ -213,14 +220,14 @@ have_dollars()
 			return;
 			}
 
-		outstring("AAnd ");
+		xlate_word(" AND ");
 		value = (Char-'0')*10 + Char1-'0';
 		say_cardinal(value);
 
 		if (value == 1L)
-			outstring("sEHnt ");
+			xlate_word(" CENT ");
 		else
-			outstring("sEHnts ");
+			xlate_word(" CENTS ");
 		new_char();	/* Used Char (tens digit) */
 		new_char();	/* Used Char1 (units digit) */
 		return;
@@ -228,22 +235,24 @@ have_dollars()
 
 	/* Otherwise say as "n POINT ddd DOLLARS " */
 
-	outstring("pOYnt ");
+	xlate_word(" POINT ");
 	for ( ; isdigit(Char) ; new_char())
 		{
 		say_ascii(Char);
 		}
 
-	outstring("dAAlAArz ");
+	xlate_word(" DOLLARS ");
 
 	return;
 	}
 
-have_special()
+static void have_special(void)
 	{
+#if 0
 	if (Char == '\n')
 		outchar('\n');
 	else
+#endif
 	if (!isspace(Char))
 		say_ascii(Char);
 
@@ -252,9 +261,9 @@ have_special()
 	}
 
 
-have_number()
+static void have_number(void)
 	{
-	long int value;
+	unsigned long value;
 	int lastdigit;
 
 	value = Char - '0';
@@ -325,7 +334,7 @@ have_number()
 	/* Recognize decimal points */
 	if (Char == '.' && isdigit(Char1))
 		{
-		outstring("pOYnt ");
+		xlate_word(" POINT ");
 		for (new_char() ; isdigit(Char) ; new_char())
 			{
 			say_ascii(Char);
@@ -345,8 +354,9 @@ have_number()
 	return;
 	}
 
+static void abbrev(const char buff[]);
 
-have_letter()
+static void have_letter(void)
 	{
 	char buff[MAX_LENGTH];
 	int count;
@@ -392,8 +402,7 @@ have_letter()
 	}
 
 /* Handle abbreviations.  Text in buff was followed by '.' */
-abbrev(buff)
-	char buff[];
+static void abbrev(const char buff[])
 	{
 	if (strcmp(buff, " DR ") == 0)
 		{

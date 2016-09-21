@@ -1,8 +1,9 @@
+#include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>
 
-#define FALSE (0)
-#define TRUE (!0)
+#include "phoneme.h"
 
 /*
 **	English to Phoneme translation.
@@ -37,25 +38,21 @@
 **		+	One of E, I or Y (a "front" vowel)
 */
 
-typedef char *Rule[4];	/* A rule is four character pointers */
+extern const Rule *const Rules[];	/* An array of pointers to rules */
 
-extern Rule *Rules[];	/* An array of pointers to rules */
-
-int isvowel(chr)
-	char chr;
+static bool isvowel(char chr)
 	{
-	return (chr == 'A' || chr == 'E' || chr == 'I' || 
-		chr == 'O' || chr == 'U');
+	return strchr("AEIOU", chr);
 	}
 
-int isconsonant(chr)
-	char chr;
+static bool isconsonant(char chr)
 	{
 	return (isupper(chr) && !isvowel(chr));
 	}
 
-xlate_word(word)
-	char word[];
+static int find_rule(const char word[], int index, const Rule *rules);
+
+void xlate_word(const char word[])
 	{
 	int index;	/* Current position in word */
 	int type;	/* First letter of match part */
@@ -73,19 +70,21 @@ xlate_word(word)
 	while (word[index] != '\0');
 	}
 
-find_rule(word, index, rules)
-	char word[];
-	int index;
-	Rule *rules;
+static bool leftmatch(const char *pattern, const char *context);
+static bool rightmatch(const char *pattern, const char *context);
+static void outstring(const char *string);
+extern void outchar(int chr);
+
+static int find_rule(const char word[], int index, const Rule *rules)
 	{
-	Rule *rule;
-	char *left, *match, *right, *output;
+	const Rule *rule;
+	const char *match;
 	int remainder;
 
 	for (;;)	/* Search for the rule */
 		{
 		rule = rules++;
-		match = (*rule)[1];
+		match = rule->match;
 
 		if (match == 0)	/* bad symbol! */
 			{
@@ -104,42 +103,46 @@ find_rule(word, index, rules)
 			continue;
 /*
 printf("\nWord: \"%s\", Index:%4d, Trying: \"%s/%s/%s\" = \"%s\"\n",
-    word, index, (*rule)[0], (*rule)[1], (*rule)[2], (*rule)[3]);
+    word, index, rule->left, rule->match, rule->right, rule->output);
 */
-		left = (*rule)[0];
-		right = (*rule)[2];
 
-		if (!leftmatch(left, &word[index-1]))
+		if (!leftmatch(rule->left, &word[index-1]))
 			continue;
 /*
-printf("leftmatch(\"%s\",\"...%c\") succeded!\n", left, word[index-1]);
+printf("leftmatch(\"%s\",\"...%c\") succeded!\n", rule->left, word[index-1]);
 */
-		if (!rightmatch(right, &word[remainder]))
+		if (!rightmatch(rule->right, &word[remainder]))
 			continue;
 /*
-printf("rightmatch(\"%s\",\"%s\") succeded!\n", right, &word[remainder]);
+printf("rightmatch(\"%s\",\"%s\") succeded!\n", rule->right, &word[remainder]);
 */
-		output = (*rule)[3];
 /*
 printf("Success: ");
 */
-		outstring(output);
+		outstring(rule->output);
 		return remainder;
 		}
 	}
 
-
-leftmatch(pattern, context)
-	char *pattern;	/* first char of pattern to match in text */
-	char *context;	/* last char of text to be matched */
+static void outstring(const char *string)
 	{
-	char *pat;
-	char *text;
+	while (*string != '\0')
+		outchar(*string++);
+	}
+
+
+
+	//char *pattern;	/* first char of pattern to match in text */
+	//char *context;	/* last char of text to be matched */
+static bool leftmatch(const char *pattern, const char *context)
+	{
+	const char *pat;
+	const char *text;
 	int count;
 
 	if (*pattern == '\0')	/* null string matches any context */
 		{
-		return TRUE;
+		return true;
 		}
 
 	/* point to last character in pattern string */
@@ -152,19 +155,23 @@ leftmatch(pattern, context)
 		{
 		/* First check for simple text or space */
 		if (isalpha(*pat) || *pat == '\'' || *pat == ' ')
+			{
 			if (*pat != *text)
-				return FALSE;
+				{
+				return false;
+				}
 			else
 				{
 				text--;
 				continue;
 				}
+			}
 
 		switch (*pat)
 			{
 		case '#':	/* One or more vowels */
 			if (!isvowel(*text))
-				return FALSE;
+				return false;
 
 			text--;
 
@@ -179,45 +186,42 @@ leftmatch(pattern, context)
 
 		case '^':	/* One consonant */
 			if (!isconsonant(*text))
-				return FALSE;
+				return false;
 			text--;
 			break;
 
 		case '.':	/* B, D, V, G, J, L, M, N, R, W, Z */
-			if (*text != 'B' && *text != 'D' && *text != 'V'
-			   && *text != 'G' && *text != 'J' && *text != 'L'
-			   && *text != 'M' && *text != 'N' && *text != 'R'
-			   && *text != 'W' && *text != 'Z')
-				return FALSE;
+			if (!strchr("BDVGJLMNRWZ", *text))
+				return false;
 			text--;
 			break;
 
 		case '+':	/* E, I or Y (front vowel) */
-			if (*text != 'E' && *text != 'I' && *text != 'Y')
-				return FALSE;
+			if (!strchr("EIY", *text))
+				return false;
 			text--;
 			break;
 
 		case '%':
 		default:
 			fprintf(stderr, "Bad char in left rule: '%c'\n", *pat);
-			return FALSE;
+			return false;
 			}
 		}
 
-	return TRUE;
+	return true;
 	}
 
 
-rightmatch(pattern, context)
-	char *pattern;	/* first char of pattern to match in text */
-	char *context;	/* last char of text to be matched */
+	//char *pattern;	/* first char of pattern to match in text */
+	//char *context;	/* last char of text to be matched */
+static bool rightmatch(const char *pattern, const char *context)
 	{
-	char *pat;
-	char *text;
+	const char *pat;
+	const char *text;
 
 	if (*pattern == '\0')	/* null string matches any context */
-		return TRUE;
+		return true;
 
 	pat = pattern;
 	text = context;
@@ -226,19 +230,23 @@ rightmatch(pattern, context)
 		{
 		/* First check for simple text or space */
 		if (isalpha(*pat) || *pat == '\'' || *pat == ' ')
+			{
 			if (*pat != *text)
-				return FALSE;
+				{
+				return false;
+				}
 			else
 				{
 				text++;
 				continue;
 				}
+			}
 
 		switch (*pat)
 			{
 		case '#':	/* One or more vowels */
 			if (!isvowel(*text))
-				return FALSE;
+				return false;
 
 			text++;
 
@@ -253,22 +261,19 @@ rightmatch(pattern, context)
 
 		case '^':	/* One consonant */
 			if (!isconsonant(*text))
-				return FALSE;
+				return false;
 			text++;
 			break;
 
 		case '.':	/* B, D, V, G, J, L, M, N, R, W, Z */
-			if (*text != 'B' && *text != 'D' && *text != 'V'
-			   && *text != 'G' && *text != 'J' && *text != 'L'
-			   && *text != 'M' && *text != 'N' && *text != 'R'
-			   && *text != 'W' && *text != 'Z')
-				return FALSE;
+			if (!strchr("BDVGJLMNRWZ", *text))
+				return false;
 			text++;
 			break;
 
 		case '+':	/* E, I or Y (front vowel) */
-			if (*text != 'E' && *text != 'I' && *text != 'Y')
-				return FALSE;
+			if (!strchr("EIY", *text))
+				return false;
 			text++;
 			break;
 
@@ -291,8 +296,7 @@ rightmatch(pattern, context)
 						}
 					}
 				else
-				if (*text == 'R' || *text == 'S' 
-				   || *text == 'D')
+				if (strchr("RSD", *text))
 					text++;
 				break;
 				}
@@ -309,16 +313,16 @@ rightmatch(pattern, context)
 						break;
 						}
 					}
-				return FALSE;
+				return false;
 				}
 			else
-			return FALSE;
+			return false;
 
 		default:
 			fprintf(stderr, "Bad char in right rule:'%c'\n", *pat);
-			return FALSE;
+			return false;
 			}
 		}
 
-	return TRUE;
+	return true;
 	}

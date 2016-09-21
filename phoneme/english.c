@@ -19,28 +19,28 @@
 **
 **	The Phoneme codes:
 **
-**		IY	bEEt		IH	bIt
-**		EY	gAte		EH	gEt
-**		AE	fAt		AA	fAther
-**		AO	lAWn		OW	lOne
-**		UH	fUll		UW	fOOl
-**		ER	mURdER		AX	About
-**		AH	bUt		AY	hIde
-**		AW	hOW		OY	tOY
+**		i	bEEt		I	bIt
+**		eI	gAte		E	gEt
+**		&	fAt		A	fAther
+**		O	lAWn		oU	lOne
+**		U	fUll		u	fOOl
+**		R	mURdER		@	About
+**		V	bUt		aI	hIde
+**		aU	hOW		oI	tOY
 **	
 **		p	Pack		b	Back
 **		t	Time		d	Dime
 **		k	Coat		g	Goat
 **		f	Fault		v	Vault
-**		TH	eTHer		DH	eiTHer
+**		T	eTHer		D	eiTHer
 **		s	Sue		z	Zoo
-**		SH	leaSH		ZH	leiSure
-**		HH	How		m	suM
-**		n	suN		NG	suNG
+**		S	leaSH		Z	leiSure
+**		h	How		m	suM
+**		n	suN		N	suNG
 **		l	Laugh		w	Wear
-**		y	Young		r	Rate
-**		CH	CHar		j	Jar
-**		WH	WHere
+**		j	Young		r	Rate
+**		tS	CHar		dZ	Jar
+**		hw	WHere
 **
 **
 **	Rules are made up of four parts:
@@ -52,7 +52,7 @@
 **
 **	Procedure:
 **
-**		Seperate each block of letters (apostrophes included) 
+**		Separate each block of letters (apostrophes included)
 **		and add a space on each side.  For each unmatched 
 **		letter in the word, look through the rules where the 
 **		text to match starts with the letter in the word.  If 
@@ -74,27 +74,21 @@
 **
 */
 
+#include "phoneme.h"
 
 /* Context definitions */
-static char Anything[] = "";	/* No context requirement */
-static char Nothing[] = " ";	/* Context is beginning or end of word */
+static const char Anything[] = "";	/* No context requirement */
+static const char Nothing[] = " ";	/* Context is beginning or end of word */
 
 /* Phoneme definitions */
-static char Pause[] = " ";	/* Short silence */
-static char Silent[] = "";	/* No phonemes */
-
-#define LEFT_PART	0
-#define MATCH_PART	1
-#define RIGHT_PART	2
-#define OUT_PART	3
-
-typedef char *Rule[4];	/* Rule is an array of 4 character pointers */
+static const char Pause[] = " ";	/* Short silence */
+static const char Silent[] = "";	/* No phonemes */
 
 /*0 = Punctuation */
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule punct_rules[] =
+static const Rule punct_rules[] =
 	{
 	{Anything,	" ",		Anything,	Pause	},
 	{Anything,	"-",		Anything,	Silent	},
@@ -110,248 +104,249 @@ static Rule punct_rules[] =
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule A_rules[] =
+static const Rule A_rules[] =
 	{
-	{Anything,	"A",		Nothing,	"AX"	},
-	{Nothing,	"ARE",		Nothing,	"AAr"	},
-	{Nothing,	"AR",		"O",		"AXr"	},
-	{Anything,	"AR",		"#",		"EHr"	},
-	{"^",		"AS",		"#",		"EYs"	},
-	{Anything,	"A",		"WA",		"AX"	},
-	{Anything,	"AW",		Anything,	"AO"	},
-	{" :",		"ANY",		Anything,	"EHnIY"	},
-	{Anything,	"A",		"^+#",		"EY"	},
-	{"#:",		"ALLY",		Anything,	"AXlIY"	},
-	{Nothing,	"AL",		"#",		"AXl"	},
-	{Anything,	"AGAIN",	Anything,	"AXgEHn"},
-	{"#:",		"AG",		"E",		"IHj"	},
-	{Anything,	"A",		"^+:#",		"AE"	},
-	{" :",		"A",		"^+ ",		"EY"	},
-	{Anything,	"A",		"^%",		"EY"	},
-	{Nothing,	"ARR",		Anything,	"AXr"	},
-	{Anything,	"ARR",		Anything,	"AEr"	},
-	{" :",		"AR",		Nothing,	"AAr"	},
-	{Anything,	"AR",		Nothing,	"ER"	},
-	{Anything,	"AR",		Anything,	"AAr"	},
-	{Anything,	"AIR",		Anything,	"EHr"	},
-	{Anything,	"AI",		Anything,	"EY"	},
-	{Anything,	"AY",		Anything,	"EY"	},
-	{Anything,	"AU",		Anything,	"AO"	},
-	{"#:",		"AL",		Nothing,	"AXl"	},
-	{"#:",		"ALS",		Nothing,	"AXlz"	},
-	{Anything,	"ALK",		Anything,	"AOk"	},
-	{Anything,	"AL",		"^",		"AOl"	},
-	{" :",		"ABLE",		Anything,	"EYbAXl"},
-	{Anything,	"ABLE",		Anything,	"AXbAXl"},
-	{Anything,	"ANG",		"+",		"EYnj"	},
-	{Anything,	"A",		Anything,	"AE"	},
+	{Anything,	"A",		Nothing,	"@"	},
+	{Nothing,	"ARE",		Nothing,	"AR"	},
+	{Nothing,	"AR",		"O",		"@r"	},
+	{Anything,	"AR",		"#",		"Er"	},
+	{"^",		"AS",		"#",		"eIs"	},
+	{Anything,	"A",		"WA",		"@"	},
+	{Anything,	"AW",		Anything,	"O"	},
+	{" :",		"ANY",		Anything,	"Eni"	},
+	{Anything,	"A",		"^+#",		"eI"	},
+	{"#:",		"ALLY",		Anything,	"@li"	},
+	{Nothing,	"AL",		"#",		"@l"	},
+	{Anything,	"AGAIN",	Anything,	"@gEn"},
+	{"#:",		"AG",		"E",		"IdZ"	},
+	{Anything,	"A",		"^+:#",		"&"	},
+	{" :",		"A",		"^+ ",		"eI"	},
+	{Anything,	"A",		"^%",		"eI"	},
+	{Nothing,	"ARR",		Anything,	"@r"	},
+	{Anything,	"ARR",		Anything,	"&r"	},
+	{" :",		"AR",		Nothing,	"AR"	},
+	{Anything,	"AR",		Nothing,	"R"	},
+	{Anything,	"AR",		Anything,	"Ar"	},
+	{Anything,	"AIR",		Anything,	"Er"	},
+	{Anything,	"AI",		Anything,	"eI"	},
+	{Anything,	"AY",		Anything,	"eI"	},
+	{Anything,	"AU",		Anything,	"O"	},
+	{"#:",		"AL",		Nothing,	"L"	},
+	{"#:",		"ALS",		Nothing,	"Lz"	},
+	{Anything,	"ALK",		Anything,	"Ok"	},
+	{Anything,	"AL",		"^",		"OL"	},
+	{" :",		"ABLE",		Anything,	"eIbL"},
+	{Anything,	"ABLE",		Anything,	"@bL"},
+	{Anything,	"ANG",		"+",		"eIndZ"	},
+	{Anything,	"A",		Anything,	"&"	},
  	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule B_rules[] =
+static const Rule B_rules[] =
 	{
-	{Nothing,	"BE",		"^#",		"bIH"	},
-	{Anything,	"BEING",	Anything,	"bIYIHNG"},
-	{Nothing,	"BOTH",		Nothing,	"bOWTH"	},
-	{Nothing,	"BUS",		"#",		"bIHz"	},
-	{Anything,	"BUIL",		Anything,	"bIHl"	},
+	{Nothing,	"BE",		"^#",		"bI"	},
+	{Anything,	"BEING",	Anything,	"biIN"},
+	{Nothing,	"BOTH",		Nothing,	"boUT"	},
+	{Nothing,	"BUS",		"#",		"bIz"	},
+	{Anything,	"BUIL",		Anything,	"bIl"	},
 	{Anything,	"B",		Anything,	"b"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule C_rules[] =
+static const Rule C_rules[] =
 	{
 	{Nothing,	"CH",		"^",		"k"	},
 	{"^E",		"CH",		Anything,	"k"	},
-	{Anything,	"CH",		Anything,	"CH"	},
-	{" S",		"CI",		"#",		"sAY"	},
-	{Anything,	"CI",		"A",		"SH"	},
-	{Anything,	"CI",		"O",		"SH"	},
-	{Anything,	"CI",		"EN",		"SH"	},
+	{Anything,	"CH",		Anything,	"tS"	},
+	{" S",		"CI",		"#",		"saI"	},
+	{Anything,	"CI",		"A",		"S"	},
+	{Anything,	"CI",		"O",		"S"	},
+	{Anything,	"CI",		"EN",		"S"	},
 	{Anything,	"C",		"+",		"s"	},
 	{Anything,	"CK",		Anything,	"k"	},
-	{Anything,	"COM",		"%",		"kAHm"	},
+	{Anything,	"COM",		"%",		"kVm"	},
 	{Anything,	"C",		Anything,	"k"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule D_rules[] =
+static const Rule D_rules[] =
 	{
-	{"#:",		"DED",		Nothing,	"dIHd"	},
+	{"#:",		"DED",		Nothing,	"dId"	},
 	{".E",		"D",		Nothing,	"d"	},
 	{"#:^E",	"D",		Nothing,	"t"	},
-	{Nothing,	"DE",		"^#",		"dIH"	},
-	{Nothing,	"DO",		Nothing,	"dUW"	},
-	{Nothing,	"DOES",		Anything,	"dAHz"	},
-	{Nothing,	"DOING",	Anything,	"dUWIHNG"},
-	{Nothing,	"DOW",		Anything,	"dAW"	},
-	{Anything,	"DU",		"A",		"jUW"	},
+	{Nothing,	"DE",		"^#",		"dI"	},
+	{Nothing,	"DO",		Nothing,	"du"	},
+	{Nothing,	"DOES",		Anything,	"dVz"	},
+	{Nothing,	"DOING",	Anything,	"duIN"},
+	{Nothing,	"DOW",		Anything,	"daU"	},
+	{Anything,	"DU",		"A",		"dZu"	},
 	{Anything,	"D",		Anything,	"d"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule E_rules[] =
+static const Rule E_rules[] =
 	{
 	{"#:",		"E",		Nothing,	Silent	},
 	{"':^",		"E",		Nothing,	Silent	},
-	{" :",		"E",		Nothing,	"IY"	},
+	{" :",		"E",		Nothing,	"i"	},
 	{"#",		"ED",		Nothing,	"d"	},
+	{"DR",		"E",		"D",		"E"	},
 	{"#:",		"E",		"D ",		Silent	},
-	{Anything,	"EV",		"ER",		"EHv"	},
-	{Anything,	"E",		"^%",		"IY"	},
-	{Anything,	"ERI",		"#",		"IYrIY"	},
-	{Anything,	"ERI",		Anything,	"EHrIH"	},
-	{"#:",		"ER",		"#",		"ER"	},
-	{Anything,	"ER",		"#",		"EHr"	},
-	{Anything,	"ER",		Anything,	"ER"	},
-	{Nothing,	"EVEN",		Anything,	"IYvEHn"},
+	{Anything,	"EV",		"ER",		"Ev"	},
+	{Anything,	"E",		"^%",		"i"	},
+	{Anything,	"ERI",		"#",		"iri"	},
+	{Anything,	"ERI",		Anything,	"ErI"	},
+	{"#:",		"ER",		"#",		"R"	},
+	{Anything,	"ER",		"#",		"Er"	},
+	{Anything,	"ER",		Anything,	"R"	},
+	{Nothing,	"EVEN",		Anything,	"ivEn"},
 	{"#:",		"E",		"W",		Silent	},
-	{"T",		"EW",		Anything,	"UW"	},
-	{"S",		"EW",		Anything,	"UW"	},
-	{"R",		"EW",		Anything,	"UW"	},
-	{"D",		"EW",		Anything,	"UW"	},
-	{"L",		"EW",		Anything,	"UW"	},
-	{"Z",		"EW",		Anything,	"UW"	},
-	{"N",		"EW",		Anything,	"UW"	},
-	{"J",		"EW",		Anything,	"UW"	},
-	{"TH",		"EW",		Anything,	"UW"	},
-	{"CH",		"EW",		Anything,	"UW"	},
-	{"SH",		"EW",		Anything,	"UW"	},
-	{Anything,	"EW",		Anything,	"yUW"	},
-	{Anything,	"E",		"O",		"IY"	},
-	{"#:S",		"ES",		Nothing,	"IHz"	},
-	{"#:C",		"ES",		Nothing,	"IHz"	},
-	{"#:G",		"ES",		Nothing,	"IHz"	},
-	{"#:Z",		"ES",		Nothing,	"IHz"	},
-	{"#:X",		"ES",		Nothing,	"IHz"	},
-	{"#:J",		"ES",		Nothing,	"IHz"	},
-	{"#:CH",	"ES",		Nothing,	"IHz"	},
-	{"#:SH",	"ES",		Nothing,	"IHz"	},
+	{"T",		"EW",		Anything,	"u"	},
+	{"S",		"EW",		Anything,	"u"	},
+	{"R",		"EW",		Anything,	"u"	},
+	{"D",		"EW",		Anything,	"u"	},
+	{"L",		"EW",		Anything,	"u"	},
+	{"Z",		"EW",		Anything,	"u"	},
+	{"N",		"EW",		Anything,	"u"	},
+	{"J",		"EW",		Anything,	"u"	},
+	{"TH",		"EW",		Anything,	"u"	},
+	{"CH",		"EW",		Anything,	"u"	},
+	{"SH",		"EW",		Anything,	"u"	},
+	{Anything,	"EW",		Anything,	"ju"	},
+	{Anything,	"E",		"O",		"i"	},
+	{"#:S",		"ES",		Nothing,	"Iz"	},
+	{"#:C",		"ES",		Nothing,	"Iz"	},
+	{"#:G",		"ES",		Nothing,	"Iz"	},
+	{"#:Z",		"ES",		Nothing,	"Iz"	},
+	{"#:X",		"ES",		Nothing,	"Iz"	},
+	{"#:J",		"ES",		Nothing,	"Iz"	},
+	{"#:CH",	"ES",		Nothing,	"Iz"	},
+	{"#:SH",	"ES",		Nothing,	"Iz"	},
 	{"#:",		"E",		"S ",		Silent	},
-	{"#:",		"ELY",		Nothing,	"lIY"	},
-	{"#:",		"EMENT",	Anything,	"mEHnt"	},
-	{Anything,	"EFUL",		Anything,	"fUHl"	},
-	{Anything,	"EE",		Anything,	"IY"	},
-	{Anything,	"EARN",		Anything,	"ERn"	},
-	{Nothing,	"EAR",		"^",		"ER"	},
-	{Anything,	"EAD",		Anything,	"EHd"	},
-	{"#:",		"EA",		Nothing,	"IYAX"	},
-	{Anything,	"EA",		"SU",		"EH"	},
-	{Anything,	"EA",		Anything,	"IY"	},
-	{Anything,	"EIGH",		Anything,	"EY"	},
-	{Anything,	"EI",		Anything,	"IY"	},
-	{Nothing,	"EYE",		Anything,	"AY"	},
-	{Anything,	"EY",		Anything,	"IY"	},
-	{Anything,	"EU",		Anything,	"yUW"	},
-	{Anything,	"E",		Anything,	"EH"	},
+	{"#:",		"ELY",		Nothing,	"li"	},
+	{"#:",		"EMENT",	Anything,	"mEnt"	},
+	{Anything,	"EFUL",		Anything,	"fUL"	},
+	{Anything,	"EE",		Anything,	"i"	},
+	{Anything,	"EARN",		Anything,	"Rn"	},
+	{Nothing,	"EAR",		"^",		"R"	},
+	{Anything,	"EAD",		Anything,	"Ed"	},
+	{"#:",		"EA",		Nothing,	"i@"	},
+	{Anything,	"EA",		"SU",		"E"	},
+	{Anything,	"EA",		Anything,	"i"	},
+	{Anything,	"EIGH",		Anything,	"eI"	},
+	{Anything,	"EI",		Anything,	"i"	},
+	{Nothing,	"EYE",		Anything,	"aI"	},
+	{Anything,	"EY",		Anything,	"i"	},
+	{Anything,	"EU",		Anything,	"ju"	},
+	{Anything,	"E",		Anything,	"E"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule F_rules[] =
+static const Rule F_rules[] =
 	{
-	{Anything,	"FUL",		Anything,	"fUHl"	},
+	{Anything,	"FUL",		Anything,	"fUL"	},
 	{Anything,	"F",		Anything,	"f"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule G_rules[] =
+static const Rule G_rules[] =
 	{
-	{Anything,	"GIV",		Anything,	"gIHv"	},
+	{Anything,	"GIV",		Anything,	"gIv"	},
 	{Nothing,	"G",		"I^",		"g"	},
-	{Anything,	"GE",		"T",		"gEH"	},
-	{"SU",		"GGES",		Anything,	"gjEHs"	},
+	{Anything,	"GE",		"T",		"gE"	},
+	{"SU",		"GGES",		Anything,	"gdZEs"	},
 	{Anything,	"GG",		Anything,	"g"	},
 	{" B#",		"G",		Anything,	"g"	},
-	{Anything,	"G",		"+",		"j"	},
-	{Anything,	"GREAT",	Anything,	"grEYt"	},
+	{Anything,	"G",		"+",		"dZ"	},
+	{Anything,	"GREAT",	Anything,	"greIt"	},
 	{"#",		"GH",		Anything,	Silent	},
 	{Anything,	"G",		Anything,	"g"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule H_rules[] =
+static const Rule H_rules[] =
 	{
-	{Nothing,	"HAV",		Anything,	"hAEv"	},
-	{Nothing,	"HERE",		Anything,	"hIYr"	},
-	{Nothing,	"HOUR",		Anything,	"AWER"	},
-	{Anything,	"HOW",		Anything,	"hAW"	},
+	{Nothing,	"HAV",		Anything,	"h&v"	},
+	{Nothing,	"HERE",		Anything,	"hiR"	},
+	{Nothing,	"HOUR",		Anything,	"aUR"	},
+	{Anything,	"HOW",		Anything,	"haU"	},
 	{Anything,	"H",		"#",		"h"	},
 	{Anything,	"H",		Anything,	Silent	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule I_rules[] =
+static const Rule I_rules[] =
 	{
-	{Nothing,	"IN",		Anything,	"IHn"	},
-	{Nothing,	"I",		Nothing,	"AY"	},
-	{Anything,	"IN",		"D",		"AYn"	},
-	{Anything,	"IER",		Anything,	"IYER"	},
-	{"#:R",		"IED",		Anything,	"IYd"	},
-	{Anything,	"IED",		Nothing,	"AYd"	},
-	{Anything,	"IEN",		Anything,	"IYEHn"	},
-	{Anything,	"IE",		"T",		"AYEH"	},
-	{" :",		"I",		"%",		"AY"	},
-	{Anything,	"I",		"%",		"IY"	},
-	{Anything,	"IE",		Anything,	"IY"	},
-	{Anything,	"I",		"^+:#",		"IH"	},
-	{Anything,	"IR",		"#",		"AYr"	},
-	{Anything,	"IZ",		"%",		"AYz"	},
-	{Anything,	"IS",		"%",		"AYz"	},
-	{Anything,	"I",		"D%",		"AY"	},
-	{"+^",		"I",		"^+",		"IH"	},
-	{Anything,	"I",		"T%",		"AY"	},
-	{"#:^",		"I",		"^+",		"IH"	},
-	{Anything,	"I",		"^+",		"AY"	},
-	{Anything,	"IR",		Anything,	"ER"	},
-	{Anything,	"IGH",		Anything,	"AY"	},
-	{Anything,	"ILD",		Anything,	"AYld"	},
-	{Anything,	"IGN",		Nothing,	"AYn"	},
-	{Anything,	"IGN",		"^",		"AYn"	},
-	{Anything,	"IGN",		"%",		"AYn"	},
-	{Anything,	"IQUE",		Anything,	"IYk"	},
-	{Anything,	"I",		Anything,	"IH"	},
+	{Nothing,	"IN",		Anything,	"In"	},
+	{Nothing,	"I",		Nothing,	"aI"	},
+	{Anything,	"IN",		"D",		"aIn"	},
+	{Anything,	"IER",		Anything,	"iR"	},
+	{"#:R",		"IED",		Anything,	"id"	},
+	{Anything,	"IED",		Nothing,	"aId"	},
+	{Anything,	"IEN",		Anything,	"iEn"	},
+	{Anything,	"IE",		"T",		"aIE"	},
+	{" :",		"I",		"%",		"aI"	},
+	{Anything,	"I",		"%",		"i"	},
+	{Anything,	"IE",		Anything,	"i"	},
+	{Anything,	"I",		"^+:#",		"I"	},
+	{Anything,	"IR",		"#",		"aIr"	},
+	{Anything,	"IZ",		"%",		"aIz"	},
+	{Anything,	"IS",		"%",		"aIz"	},
+	{Anything,	"I",		"D%",		"aI"	},
+	{"+^",		"I",		"^+",		"I"	},
+	{Anything,	"I",		"T%",		"aI"	},
+	{"#:^",		"I",		"^+",		"I"	},
+	{Anything,	"I",		"^+",		"aI"	},
+	{Anything,	"IR",		Anything,	"R"	},
+	{Anything,	"IGH",		Anything,	"aI"	},
+	{Anything,	"ILD",		Anything,	"aILd"	},
+	{Anything,	"IGN",		Nothing,	"aIn"	},
+	{Anything,	"IGN",		"^",		"aIn"	},
+	{Anything,	"IGN",		"%",		"aIn"	},
+	{Anything,	"IQUE",		Anything,	"ik"	},
+	{Anything,	"I",		Anything,	"I"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule J_rules[] =
+static const Rule J_rules[] =
 	{
-	{Anything,	"J",		Anything,	"j"	},
+	{Anything,	"J",		Anything,	"dZ"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule K_rules[] =
+static const Rule K_rules[] =
 	{
 	{Nothing,	"K",		"N",		Silent	},
 	{Anything,	"K",		Anything,	"k"	},
@@ -359,150 +354,150 @@ static Rule K_rules[] =
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule L_rules[] =
+static const Rule L_rules[] =
 	{
-	{Anything,	"LO",		"C#",		"lOW"	},
+	{Anything,	"LO",		"C#",		"loU"	},
 	{"L",		"L",		Anything,	Silent	},
-	{"#:^",		"L",		"%",		"AXl"	},
-	{Anything,	"LEAD",		Anything,	"lIYd"	},
+	{"#:^",		"L",		"%",		"L"	},
+	{Anything,	"LEAD",		Anything,	"lid"	},
 	{Anything,	"L",		Anything,	"l"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule M_rules[] =
+static const Rule M_rules[] =
 	{
-	{Anything,	"MOV",		Anything,	"mUWv"	},
+	{Anything,	"MOV",		Anything,	"muv"	},
 	{Anything,	"M",		Anything,	"m"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule N_rules[] =
+static const Rule N_rules[] =
 	{
-	{"E",		"NG",		"+",		"nj"	},
-	{Anything,	"NG",		"R",		"NGg"	},
-	{Anything,	"NG",		"#",		"NGg"	},
-	{Anything,	"NGL",		"%",		"NGgAXl"},
-	{Anything,	"NG",		Anything,	"NG"	},
-	{Anything,	"NK",		Anything,	"NGk"	},
-	{Nothing,	"NOW",		Nothing,	"nAW"	},
+	{"E",		"NG",		"+",		"ndZ"	},
+	{Anything,	"NG",		"R",		"Ng"	},
+	{Anything,	"NG",		"#",		"Ng"	},
+	{Anything,	"NGL",		"%",		"NgL"},
+	{Anything,	"NG",		Anything,	"N"	},
+	{Anything,	"NK",		Anything,	"Nk"	},
+	{Nothing,	"NOW",		Nothing,	"naU"	},
 	{Anything,	"N",		Anything,	"n"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule O_rules[] =
+static const Rule O_rules[] =
 	{
-	{Anything,	"OF",		Nothing,	"AXv"	},
-	{Anything,	"OROUGH",	Anything,	"EROW"	},
-	{"#:",		"OR",		Nothing,	"ER"	},
-	{"#:",		"ORS",		Nothing,	"ERz"	},
-	{Anything,	"OR",		Anything,	"AOr"	},
-	{Nothing,	"ONE",		Anything,	"wAHn"	},
-	{Anything,	"OW",		Anything,	"OW"	},
-	{Nothing,	"OVER",		Anything,	"OWvER"	},
-	{Anything,	"OV",		Anything,	"AHv"	},
-	{Anything,	"O",		"^%",		"OW"	},
-	{Anything,	"O",		"^EN",		"OW"	},
-	{Anything,	"O",		"^I#",		"OW"	},
-	{Anything,	"OL",		"D",		"OWl"	},
-	{Anything,	"OUGHT",	Anything,	"AOt"	},
-	{Anything,	"OUGH",		Anything,	"AHf"	},
-	{Nothing,	"OU",		Anything,	"AW"	},
-	{"H",		"OU",		"S#",		"AW"	},
-	{Anything,	"OUS",		Anything,	"AXs"	},
-	{Anything,	"OUR",		Anything,	"AOr"	},
-	{Anything,	"OULD",		Anything,	"UHd"	},
-	{"^",		"OU",		"^L",		"AH"	},
-	{Anything,	"OUP",		Anything,	"UWp"	},
-	{Anything,	"OU",		Anything,	"AW"	},
-	{Anything,	"OY",		Anything,	"OY"	},
-	{Anything,	"OING",		Anything,	"OWIHNG"},
-	{Anything,	"OI",		Anything,	"OY"	},
-	{Anything,	"OOR",		Anything,	"AOr"	},
-	{Anything,	"OOK",		Anything,	"UHk"	},
-	{Anything,	"OOD",		Anything,	"UHd"	},
-	{Anything,	"OO",		Anything,	"UW"	},
-	{Anything,	"O",		"E",		"OW"	},
-	{Anything,	"O",		Nothing,	"OW"	},
-	{Anything,	"OA",		Anything,	"OW"	},
-	{Nothing,	"ONLY",		Anything,	"OWnlIY"},
-	{Nothing,	"ONCE",		Anything,	"wAHns"	},
-	{Anything,	"ON'T",		Anything,	"OWnt"	},
-	{"C",		"O",		"N",		"AA"	},
-	{Anything,	"O",		"NG",		"AO"	},
-	{" :^",		"O",		"N",		"AH"	},
-	{"I",		"ON",		Anything,	"AXn"	},
-	{"#:",		"ON",		Nothing,	"AXn"	},
-	{"#^",		"ON",		Anything,	"AXn"	},
-	{Anything,	"O",		"ST ",		"OW"	},
-	{Anything,	"OF",		"^",		"AOf"	},
-	{Anything,	"OTHER",	Anything,	"AHDHER"},
-	{Anything,	"OSS",		Nothing,	"AOs"	},
-	{"#:^",		"OM",		Anything,	"AHm"	},
-	{Anything,	"O",		Anything,	"AA"	},
+	{Anything,	"OF",		Nothing,	"@v"	},
+	{Anything,	"OROUGH",	Anything,	"RoU"	},
+	{"#:",		"OR",		Nothing,	"R"	},
+	{"#:",		"ORS",		Nothing,	"Rz"	},
+	{Anything,	"OR",		Anything,	"Or"	},
+	{Nothing,	"ONE",		Anything,	"wVn"	},
+	{Anything,	"OW",		Anything,	"oU"	},
+	{Nothing,	"OVER",		Anything,	"oUvR"	},
+	{Anything,	"OV",		Anything,	"Vv"	},
+	{Anything,	"O",		"^%",		"oU"	},
+	{Anything,	"O",		"^EN",		"oU"	},
+	{Anything,	"O",		"^I#",		"oU"	},
+	{Anything,	"OL",		"D",		"oUL"	},
+	{Anything,	"OUGHT",	Anything,	"Ot"	},
+	{Anything,	"OUGH",		Anything,	"Vf"	},
+	{Nothing,	"OU",		Anything,	"aU"	},
+	{"H",		"OU",		"S#",		"aU"	},
+	{Anything,	"OUS",		Anything,	"@s"	},
+	{Anything,	"OUR",		Anything,	"OR"	},
+	{Anything,	"OULD",		Anything,	"Ud"	},
+	{"^",		"OU",		"^L",		"V"	},
+	{Anything,	"OUP",		Anything,	"up"	},
+	{Anything,	"OU",		Anything,	"aU"	},
+	{Anything,	"OY",		Anything,	"oI"	},
+	{Anything,	"OING",		Anything,	"oUIN"},
+	{Anything,	"OI",		Anything,	"oI"	},
+	{Anything,	"OOR",		Anything,	"OR"	},
+	{Anything,	"OOK",		Anything,	"Uk"	},
+	{Anything,	"OOD",		Anything,	"Ud"	},
+	{Anything,	"OO",		Anything,	"u"	},
+	{Anything,	"O",		"E",		"oU"	},
+	{Anything,	"O",		Nothing,	"oU"	},
+	{Anything,	"OA",		Anything,	"oU"	},
+	{Nothing,	"ONLY",		Anything,	"oUnli"},
+	{Nothing,	"ONCE",		Anything,	"wVns"	},
+	{Anything,	"ON'T",		Anything,	"oUnt"	},
+	{"C",		"O",		"N",		"A"	},
+	{Anything,	"O",		"NG",		"O"	},
+	{" :^",		"O",		"N",		"V"	},
+	{"I",		"ON",		Anything,	"@n"	},
+	{"#:",		"ON",		Nothing,	"@n"	},
+	{"#^",		"ON",		Anything,	"@n"	},
+	{Anything,	"O",		"ST ",		"oU"	},
+	{Anything,	"OF",		"^",		"Of"	},
+	{Anything,	"OTHER",	Anything,	"VDR"},
+	{Anything,	"OSS",		Nothing,	"Os"	},
+	{"#:^",		"OM",		Anything,	"Vm"	},
+	{Anything,	"O",		Anything,	"A"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule P_rules[] =
+static const Rule P_rules[] =
 	{
 	{Anything,	"PH",		Anything,	"f"	},
-	{Anything,	"PEOP",		Anything,	"pIYp"	},
-	{Anything,	"POW",		Anything,	"pAW"	},
-	{Anything,	"PUT",		Nothing,	"pUHt"	},
+	{Anything,	"PEOP",		Anything,	"pip"	},
+	{Anything,	"POW",		Anything,	"paU"	},
+	{Anything,	"PUT",		Nothing,	"pUt"	},
 	{Anything,	"P",		Anything,	"p"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule Q_rules[] =
+static const Rule Q_rules[] =
 	{
-	{Anything,	"QUAR",		Anything,	"kwAOr"	},
+	{Anything,	"QUAR",		Anything,	"kwOR"	},
 	{Anything,	"QU",		Anything,	"kw"	},
 	{Anything,	"Q",		Anything,	"k"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule R_rules[] =
+static const Rule R_rules[] =
 	{
-	{Nothing,	"RE",		"^#",		"rIY"	},
+	{Nothing,	"RE",		"^#",		"ri"	},
 	{Anything,	"R",		Anything,	"r"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule S_rules[] =
+static const Rule S_rules[] =
 	{
-	{Anything,	"SH",		Anything,	"SH"	},
-	{"#",		"SION",		Anything,	"ZHAXn"	},
-	{Anything,	"SOME",		Anything,	"sAHm"	},
-	{"#",		"SUR",		"#",		"ZHER"	},
-	{Anything,	"SUR",		"#",		"SHER"	},
-	{"#",		"SU",		"#",		"ZHUW"	},
-	{"#",		"SSU",		"#",		"SHUW"	},
+	{Anything,	"SH",		Anything,	"S"	},
+	{"#",		"SION",		Anything,	"Z@n"	},
+	{Anything,	"SOME",		Anything,	"sVm"	},
+	{"#",		"SUR",		"#",		"ZR"	},
+	{Anything,	"SUR",		"#",		"SR"	},
+	{"#",		"SU",		"#",		"Zu"	},
+	{"#",		"SSU",		"#",		"Su"	},
 	{"#",		"SED",		Nothing,	"zd"	},
 	{"#",		"S",		"#",		"z"	},
-	{Anything,	"SAID",		Anything,	"sEHd"	},
-	{"^",		"SION",		Anything,	"SHAXn"	},
+	{Anything,	"SAID",		Anything,	"sEd"	},
+	{"^",		"SION",		Anything,	"S@n"	},
 	{Anything,	"S",		"S",		Silent	},
 	{".",		"S",		Nothing,	"z"	},
 	{"#:.E",	"S",		Nothing,	"z"	},
@@ -513,156 +508,156 @@ static Rule S_rules[] =
 	{Nothing,	"SCH",		Anything,	"sk"	},
 	{Anything,	"S",		"C+",		Silent	},
 	{"#",		"SM",		Anything,	"zm"	},
-	{"#",		"SN",		"'",		"zAXn"	},
+	{"#",		"SN",		"'",		"z@n"	},
 	{Anything,	"S",		Anything,	"s"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule T_rules[] =
+static const Rule T_rules[] =
 	{
-	{Nothing,	"THE",		Nothing,	"DHAX"	},
-	{Anything,	"TO",		Nothing,	"tUW"	},
-	{Anything,	"THAT",		Nothing,	"DHAEt"	},
-	{Nothing,	"THIS",		Nothing,	"DHIHs"	},
-	{Nothing,	"THEY",		Anything,	"DHEY"	},
-	{Nothing,	"THERE",	Anything,	"DHEHr"	},
-	{Anything,	"THER",		Anything,	"DHER"	},
-	{Anything,	"THEIR",	Anything,	"DHEHr"	},
-	{Nothing,	"THAN",		Nothing,	"DHAEn"	},
-	{Nothing,	"THEM",		Nothing,	"DHEHm"	},
-	{Anything,	"THESE",	Nothing,	"DHIYz"	},
-	{Nothing,	"THEN",		Anything,	"DHEHn"	},
-	{Anything,	"THROUGH",	Anything,	"THrUW"	},
-	{Anything,	"THOSE",	Anything,	"DHOWz"	},
-	{Anything,	"THOUGH",	Nothing,	"DHOW"	},
-	{Nothing,	"THUS",		Anything,	"DHAHs"	},
-	{Anything,	"TH",		Anything,	"TH"	},
-	{"#:",		"TED",		Nothing,	"tIHd"	},
-	{"S",		"TI",		"#N",		"CH"	},
-	{Anything,	"TI",		"O",		"SH"	},
-	{Anything,	"TI",		"A",		"SH"	},
-	{Anything,	"TIEN",		Anything,	"SHAXn"	},
-	{Anything,	"TUR",		"#",		"CHER"	},
-	{Anything,	"TU",		"A",		"CHUW"	},
-	{Nothing,	"TWO",		Anything,	"tUW"	},
+	{Nothing,	"THE",		Nothing,	"D@"	},
+	{Anything,	"TO",		Nothing,	"tu"	},
+	{Anything,	"THAT",		Nothing,	"D&t"	},
+	{Nothing,	"THIS",		Nothing,	"DIs"	},
+	{Nothing,	"THEY",		Anything,	"DeI"	},
+	{Nothing,	"THERE",	Anything,	"DER"	},
+	{Anything,	"THER",		Anything,	"DR"	},
+	{Anything,	"THEIR",	Anything,	"DER"	},
+	{Nothing,	"THAN",		Nothing,	"D&n"	},
+	{Nothing,	"THEM",		Nothing,	"DEm"	},
+	{Anything,	"THESE",	Nothing,	"Diz"	},
+	{Nothing,	"THEN",		Anything,	"DEn"	},
+	{Anything,	"THROUGH",	Anything,	"Tru"	},
+	{Anything,	"THOSE",	Anything,	"DoUz"	},
+	{Anything,	"THOUGH",	Nothing,	"DoU"	},
+	{Nothing,	"THUS",		Anything,	"DVs"	},
+	{Anything,	"TH",		Anything,	"T"	},
+	{"#:",		"TED",		Nothing,	"tId"	},
+	{"S",		"TI",		"#N",		"tS"	},
+	{Anything,	"TI",		"O",		"S"	},
+	{Anything,	"TI",		"A",		"S"	},
+	{Anything,	"TIEN",		Anything,	"S@n"	},
+	{Anything,	"TUR",		"#",		"tSR"	},
+	{Anything,	"TU",		"A",		"tSu"	},
+	{Nothing,	"TWO",		Anything,	"tu"	},
 	{Anything,	"T",		Anything,	"t"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule U_rules[] =
+static const Rule U_rules[] =
 	{
-	{Nothing,	"UN",		"I",		"yUWn"	},
-	{Nothing,	"UN",		Anything,	"AHn"	},
-	{Nothing,	"UPON",		Anything,	"AXpAOn"},
-	{"T",		"UR",		"#",		"UHr"	},
-	{"S",		"UR",		"#",		"UHr"	},
-	{"R",		"UR",		"#",		"UHr"	},
-	{"D",		"UR",		"#",		"UHr"	},
-	{"L",		"UR",		"#",		"UHr"	},
-	{"Z",		"UR",		"#",		"UHr"	},
-	{"N",		"UR",		"#",		"UHr"	},
-	{"J",		"UR",		"#",		"UHr"	},
-	{"TH",		"UR",		"#",		"UHr"	},
-	{"CH",		"UR",		"#",		"UHr"	},
-	{"SH",		"UR",		"#",		"UHr"	},
-	{Anything,	"UR",		"#",		"yUHr"	},
-	{Anything,	"UR",		Anything,	"ER"	},
-	{Anything,	"U",		"^ ",		"AH"	},
-	{Anything,	"U",		"^^",		"AH"	},
-	{Anything,	"UY",		Anything,	"AY"	},
+	{Nothing,	"UN",		"I",		"jun"	},
+	{Nothing,	"UN",		Anything,	"Vn"	},
+	{Nothing,	"UPON",		Anything,	"@pOn"},
+	{"T",		"UR",		"#",		"Ur"	},
+	{"S",		"UR",		"#",		"Ur"	},
+	{"R",		"UR",		"#",		"Ur"	},
+	{"D",		"UR",		"#",		"Ur"	},
+	{"L",		"UR",		"#",		"Ur"	},
+	{"Z",		"UR",		"#",		"Ur"	},
+	{"N",		"UR",		"#",		"Ur"	},
+	{"J",		"UR",		"#",		"Ur"	},
+	{"TH",		"UR",		"#",		"Ur"	},
+	{"CH",		"UR",		"#",		"Ur"	},
+	{"SH",		"UR",		"#",		"Ur"	},
+	{Anything,	"UR",		"#",		"jUr"	},
+	{Anything,	"UR",		Anything,	"R"	},
+	{Anything,	"U",		"^ ",		"V"	},
+	{Anything,	"U",		"^^",		"V"	},
+	{Anything,	"UY",		Anything,	"aI"	},
 	{" G",		"U",		"#",		Silent	},
 	{"G",		"U",		"%",		Silent	},
 	{"G",		"U",		"#",		"w"	},
-	{"#N",		"U",		Anything,	"yUW"	},
-	{"T",		"U",		Anything,	"UW"	},
-	{"S",		"U",		Anything,	"UW"	},
-	{"R",		"U",		Anything,	"UW"	},
-	{"D",		"U",		Anything,	"UW"	},
-	{"L",		"U",		Anything,	"UW"	},
-	{"Z",		"U",		Anything,	"UW"	},
-	{"N",		"U",		Anything,	"UW"	},
-	{"J",		"U",		Anything,	"UW"	},
-	{"TH",		"U",		Anything,	"UW"	},
-	{"CH",		"U",		Anything,	"UW"	},
-	{"SH",		"U",		Anything,	"UW"	},
-	{Anything,	"U",		Anything,	"yUW"	},
+	{"#N",		"U",		Anything,	"ju"	},
+	{"T",		"U",		Anything,	"u"	},
+	{"S",		"U",		Anything,	"u"	},
+	{"R",		"U",		Anything,	"u"	},
+	{"D",		"U",		Anything,	"u"	},
+	{"L",		"U",		Anything,	"u"	},
+	{"Z",		"U",		Anything,	"u"	},
+	{"N",		"U",		Anything,	"u"	},
+	{"J",		"U",		Anything,	"u"	},
+	{"TH",		"U",		Anything,	"u"	},
+	{"CH",		"U",		Anything,	"u"	},
+	{"SH",		"U",		Anything,	"u"	},
+	{Anything,	"U",		Anything,	"ju"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule V_rules[] =
+static const Rule V_rules[] =
 	{
-	{Anything,	"VIEW",		Anything,	"vyUW"	},
+	{Anything,	"VIEW",		Anything,	"vju"	},
 	{Anything,	"V",		Anything,	"v"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule W_rules[] =
+static const Rule W_rules[] =
 	{
-	{Nothing,	"WERE",		Anything,	"wER"	},
-	{Anything,	"WA",		"S",		"wAA"	},
-	{Anything,	"WA",		"T",		"wAA"	},
-	{Anything,	"WHERE",	Anything,	"WHEHr"	},
-	{Anything,	"WHAT",		Anything,	"WHAAt"	},
-	{Anything,	"WHOL",		Anything,	"hOWl"	},
-	{Anything,	"WHO",		Anything,	"hUW"	},
-	{Anything,	"WH",		Anything,	"WH"	},
-	{Anything,	"WAR",		Anything,	"wAOr"	},
-	{Anything,	"WOR",		"^",		"wER"	},
+	{Nothing,	"WERE",		Anything,	"wR"	},
+	{Anything,	"WA",		"S",		"wA"	},
+	{Anything,	"WA",		"T",		"wA"	},
+	{Anything,	"WHERE",	Anything,	"hwER"	},
+	{Anything,	"WHAT",		Anything,	"hwAt"	},
+	{Anything,	"WHOL",		Anything,	"hoUL"	},
+	{Anything,	"WHO",		Anything,	"hu"	},
+	{Anything,	"WH",		Anything,	"hw"	},
+	{Anything,	"WAR",		Anything,	"wOR"	},
+	{Anything,	"WOR",		"^",		"wR"	},
 	{Anything,	"WR",		Anything,	"r"	},
 	{Anything,	"W",		Anything,	"w"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule X_rules[] =
+static const Rule X_rules[] =
 	{
 	{Anything,	"X",		Anything,	"ks"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule Y_rules[] =
+static const Rule Y_rules[] =
 	{
-	{Anything,	"YOUNG",	Anything,	"yAHNG"	},
-	{Nothing,	"YOU",		Anything,	"yUW"	},
-	{Nothing,	"YES",		Anything,	"yEHs"	},
-	{Nothing,	"Y",		Anything,	"y"	},
-	{"#:^",		"Y",		Nothing,	"IY"	},
-	{"#:^",		"Y",		"I",		"IY"	},
-	{" :",		"Y",		Nothing,	"AY"	},
-	{" :",		"Y",		"#",		"AY"	},
-	{" :",		"Y",		"^+:#",		"IH"	},
-	{" :",		"Y",		"^#",		"AY"	},
-	{Anything,	"Y",		Anything,	"IH"	},
+	{Anything,	"YOUNG",	Anything,	"jVN"	},
+	{Nothing,	"YOU",		Anything,	"ju"	},
+	{Nothing,	"YES",		Anything,	"jEs"	},
+	{Nothing,	"Y",		Anything,	"j"	},
+	{"#:^",		"Y",		Nothing,	"i"	},
+	{"#:^",		"Y",		"I",		"i"	},
+	{" :",		"Y",		Nothing,	"aI"	},
+	{" :",		"Y",		"#",		"aI"	},
+	{" :",		"Y",		"^+:#",		"I"	},
+	{" :",		"Y",		"^#",		"aI"	},
+	{Anything,	"Y",		Anything,	"I"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
 /*
-**	LEFT_PART	MATCH_PART	RIGHT_PART	OUT_PART
+**	left		match		right		out
 */
-static Rule Z_rules[] =
+static const Rule Z_rules[] =
 	{
 	{Anything,	"Z",		Anything,	"z"	},
 	{Anything,	0,		Anything,	Silent	},
 	};
 
-Rule *Rules[] =
+const Rule *const Rules[] =
 	{
 	punct_rules,
 	A_rules, B_rules, C_rules, D_rules, E_rules, F_rules, G_rules, 

@@ -1,5 +1,8 @@
 #include <stdio.h>
 
+#include "phoneme.h"
+#include "saynum.h"
+
 /*
 **              Integer to Readable ASCII Conversion Routine.
 **
@@ -14,34 +17,34 @@
 
 static char *Cardinals[] = 
 	{
-	"zIHrOW ",	"wAHn ",	"tUW ",		"THrIY ",
-	"fOWr ",	"fAYv ",	"sIHks ",	"sEHvAXn ",
-	"EYt ",		"nAYn ",		
-	"tEHn ",	"IYlEHvAXn ",	"twEHlv ",	"THERtIYn ",
-	"fOWrtIYn ",	"fIHftIYn ", 	"sIHkstIYn ",	"sEHvEHntIYn ",
-	"EYtIYn ",	"nAYntIYn "
+	" ZERO ",	" ONE ",	" TWO ",		" THREE ",
+	" FOUR ",	" FIVE ",	" SIX ",	" SEVEN ",
+	" EIGHT ",		" NINE ",
+	" TEN ",	" ELEVEN ",	" TWELVE ",	" THIRTEEN ",
+	" FOURTEEN ",	" FIFTEEN ", 	" SIXTEEN ",	" SEVENTEEN ",
+	" EIGHTEEN ",	" NINETEEN "
 	} ;
 
 static char *Twenties[] = 
 	{
-	"twEHntIY ",	"THERtIY ",	"fAOrtIY ",	"fIHftIY ",
-	"sIHkstIY ",	"sEHvEHntIY ",	"EYtIY ",	"nAYntIY "
+	" TWENTY ",	" THIRTY ",	" FORTY ",	" FIFTY ",
+	" SIXTY ",	" SEVENTY ",	" EIGHTY ",	" NINETY "
 	} ;
 
 static char *Ordinals[] = 
 	{
-	"zIHrOWEHTH ",	"fERst ",	"sEHkAHnd ",	"THERd ",
-	"fOWrTH ",	"fIHfTH ",	"sIHksTH ",	"sEHvEHnTH ",
-	"EYtTH ",	"nAYnTH ",		
-	"tEHnTH ",	"IYlEHvEHnTH ",	"twEHlvTH ",	"THERtIYnTH ",
-	"fAOrtIYnTH ",	"fIHftIYnTH ", 	"sIHkstIYnTH ",	"sEHvEHntIYnTH ",
-	"EYtIYnTH ",	"nAYntIYnTH "
+	" ZEROTH ",	" FIRST ",	" SECOND ",	" THIRD ",
+	" FOURTH ",	" FIFTH ",	" SIXTH ",	" SEVENTH ",
+	" EIGHTH ",		" NINTH ",
+	" TENTH ",	" ELEVENTH ",	" TWELVETH ",	" THIRTEENTH ",
+	" FOURTEENTH ",	" FIFTEENTH ", 	" SIXTEENTH ",	" SEVENTEENTH ",
+	" EIGHTEENTH ",	" NINETEENTH "
 	} ;
 
 static char *Ord_twenties[] = 
 	{
-	"twEHntIYEHTH ","THERtIYEHTH ",	"fOWrtIYEHTH ",	"fIHftIYEHTH ",
-	"sIHkstIYEHTH ","sEHvEHntIYEHTH ","EYtIYEHTH ",	"nAYntIYEHTH "
+	" TWENTIETH ",	" THIRTIETH ",	" FORTIETH ",	" FIFTIETH ",
+	" SIXTIETH ",	" SEVENTIETH ",	" EIGHTIETH ",	" NINETIETH "
 	} ;
 
 
@@ -49,40 +52,39 @@ static char *Ord_twenties[] =
 ** Translate a number to phonemes.  This version is for CARDINAL numbers.
 **	 Note: this is recursive.
 */
-say_cardinal(value)
-	long int value;
+void say_cardinal(long svalue)
 	{
-	if (value < 0)
+	unsigned long value;
+	if (svalue < 0)
 		{
-		outstring("mAYnAHs ");
-		value = (-value);
-		if (value < 0)	/* Overflow!  -32768 */
-			{
-			outstring("IHnfIHnIHtIY ");
-			return;
-			}
+		xlate_word(" MINUS ");
+		value = (-svalue);
+		}
+	else
+		{
+		value = svalue;
 		}
 
 	if (value >= 1000000000L)	/* Billions */
 		{
 		say_cardinal(value/1000000000L);
-		outstring("bIHlIYAXn ");
+		xlate_word(" BILLION ");
 		value = value % 1000000000;
 		if (value == 0)
 			return;		/* Even billion */
 		if (value < 100)	/* as in THREE BILLION AND FIVE */
-			outstring("AEnd ");
+			xlate_word(" AND ");
 		}
 
 	if (value >= 1000000L)	/* Millions */
 		{
 		say_cardinal(value/1000000L);
-		outstring("mIHlIYAXn ");
+		xlate_word(" MILLION ");
 		value = value % 1000000L;
 		if (value == 0)
 			return;		/* Even million */
 		if (value < 100)	/* as in THREE MILLION AND FIVE */
-			outstring("AEnd ");
+			xlate_word(" AND ");
 		}
 
 	/* Thousands 1000..1099 2000..99999 */
@@ -90,18 +92,18 @@ say_cardinal(value)
 	if ((value >= 1000L && value <= 1099L) || value >= 2000L)
 		{
 		say_cardinal(value/1000L);
-		outstring("THAWzAEnd ");
+		xlate_word(" THOUSAND ");
 		value = value % 1000L;
 		if (value == 0)
 			return;		/* Even thousand */
 		if (value < 100)	/* as in THREE THOUSAND AND FIVE */
-			outstring("AEnd ");
+			xlate_word(" AND ");
 		}
 
 	if (value >= 100L)
 		{
-		outstring(Cardinals[value/100]);
-		outstring("hAHndrEHd ");
+		xlate_word(Cardinals[value/100]);
+		xlate_word(" HUNDRED ");
 		value = value % 100;
 		if (value == 0)
 			return;		/* Even hundred */
@@ -109,13 +111,13 @@ say_cardinal(value)
 
 	if (value >= 20)
 		{
-		outstring(Twenties[(value-20)/ 10]);
+		xlate_word(Twenties[(value-20)/ 10]);
 		value = value % 10;
 		if (value == 0)
 			return;		/* Even ten */
 		}
 
-	outstring(Cardinals[value]);
+	xlate_word(Cardinals[value]);
 	return;
 	} 
 
@@ -124,19 +126,18 @@ say_cardinal(value)
 ** Translate a number to phonemes.  This version is for ORDINAL numbers.
 **	 Note: this is recursive.
 */
-say_ordinal(value)
-	long int value;
+void say_ordinal(long svalue)
 	{
+	unsigned long value;
 
-	if (value < 0)
+	if (svalue < 0)
 		{
-		outstring("mAHnAXs ");
-		value = (-value);
-		if (value < 0)	/* Overflow!  -32768 */
-			{
-			outstring("IHnfIHnIHtIY ");
-			return;
-			}
+		xlate_word(" MINUS ");
+		value = (-svalue);
+		}
+	else
+		{
+		value = svalue;
 		}
 
 	if (value >= 1000000000L)	/* Billions */
@@ -145,12 +146,12 @@ say_ordinal(value)
 		value = value % 1000000000;
 		if (value == 0)
 			{
-			outstring("bIHlIYAXnTH ");
+			xlate_word(" BILLIONTH ");
 			return;		/* Even billion */
 			}
-		outstring("bIHlIYAXn ");
+		xlate_word(" BILLION ");
 		if (value < 100)	/* as in THREE BILLION AND FIVE */
-			outstring("AEnd ");
+			xlate_word(" AND ");
 		}
 
 	if (value >= 1000000L)	/* Millions */
@@ -159,12 +160,12 @@ say_ordinal(value)
 		value = value % 1000000L;
 		if (value == 0)
 			{
-			outstring("mIHlIYAXnTH ");
+			xlate_word(" MILLIONTH ");
 			return;		/* Even million */
 			}
-		outstring("mIHlIYAXn ");
+		xlate_word(" MILLION ");
 		if (value < 100)	/* as in THREE MILLION AND FIVE */
-			outstring("AEnd ");
+			xlate_word(" AND ");
 		}
 
 	/* Thousands 1000..1099 2000..99999 */
@@ -175,37 +176,37 @@ say_ordinal(value)
 		value = value % 1000L;
 		if (value == 0)
 			{
-			outstring("THAWzAEndTH ");
+			xlate_word(" THOUSANDTH ");
 			return;		/* Even thousand */
 			}
-		outstring("THAWzAEnd ");
+		xlate_word(" THOUSAND ");
 		if (value < 100)	/* as in THREE THOUSAND AND FIVE */
-			outstring("AEnd ");
+			xlate_word(" AND ");
 		}
 
 	if (value >= 100L)
 		{
-		outstring(Cardinals[value/100]);
+		xlate_word(Cardinals[value/100]);
 		value = value % 100;
 		if (value == 0)
 			{
-			outstring("hAHndrEHdTH ");
+			xlate_word(" HUNDREDTH ");
 			return;		/* Even hundred */
 			}
-		outstring("hAHndrEHd ");
+		xlate_word(" HUNDRED ");
 		}
 
 	if (value >= 20)
 		{
 		if ((value%10) == 0)
 			{
-			outstring(Ord_twenties[(value-20)/ 10]);
+			xlate_word(Ord_twenties[(value-20)/ 10]);
 			return;		/* Even ten */
 			}
-		outstring(Twenties[(value-20)/ 10]);
+		xlate_word(Twenties[(value-20)/ 10]);
 		value = value % 10;
 		}
 
-	outstring(Ordinals[value]);
+	xlate_word(Ordinals[value]);
 	return;
 	} 
