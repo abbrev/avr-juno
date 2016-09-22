@@ -25,7 +25,7 @@ static void xlate_file(void);
 **	int argc;
 **	char *argv[];
 **
-**	This is the main program.  It takes up to two file names (input
+**	This is the main program. It takes up to two file names (input
 **	and output)  and translates the input file to phoneme codes
 **	(see ENGLISH.C) on the output file.
 */
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
 	if (argc == 1)
 		{
-		fputs("Enter english text:\n", stderr);
+		fputs("Enter English text:\n", stderr);
 		}
 
 	if (argc > 1)
@@ -90,7 +90,7 @@ static int new_char(void)
 	{
 	/*
 	If the cache is full of newline, time to prime the look-ahead
-	again.  If an EOF is found, fill the remainder of the queue with
+	again. If an EOF is found, fill the remainder of the queue with
 	EOF's.
 	*/
 	if (Char == '\n'  && Char1 == '\n' && Char2 == '\n' && Char3 == '\n')
@@ -150,7 +150,7 @@ static void have_special(void);
 /*
 ** xlate_file()
 **
-**	This is the input file translator.  It sets up the first character
+**	This is the input file translator. It sets up the first character
 **	and uses it to determine what kind of text follows.
 */
 static void xlate_file(void)
@@ -401,7 +401,7 @@ static void have_letter(void)
 
 	}
 
-/* Handle abbreviations.  Text in buff was followed by '.' */
+/* Handle abbreviations. Text in buff was followed by '.' */
 static void abbrev(const char buff[])
 	{
 	if (strcmp(buff, " DR ") == 0)

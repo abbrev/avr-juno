@@ -1,7 +1,7 @@
 /*
 **	English to Phoneme rules.
 **
-**	Derived from: 
+**	Derived from:
 **
 **	     AUTOMATIC TRANSLATION OF ENGLISH TEXT TO PHONETICS
 **	            BY MEANS OF LETTER-TO-SOUND RULES
@@ -53,11 +53,11 @@
 **	Procedure:
 **
 **		Separate each block of letters (apostrophes included)
-**		and add a space on each side.  For each unmatched 
-**		letter in the word, look through the rules where the 
-**		text to match starts with the letter in the word.  If 
-**		the text to match is found and the right and left 
-**		context patterns also match, output the phonemes for 
+**		and add a space on each side. For each unmatched
+**		letter in the word, look through the rules where the
+**		text to match starts with the letter in the word. If
+**		the text to match is found and the right and left
+**		context patterns also match, output the phonemes for
 **		that rule and skip to the next unmatched letter.
 **
 **
@@ -66,7 +66,7 @@
 **		#	One or more vowels
 **		:	Zero or more consonants
 **		^	One consonant.
-**		.	One of B, D, V, G, J, L, M, N, R, W or Z (voiced 
+**		.	One of B, D, V, G, J, L, M, N, R, W or Z (voiced
 **			consonants)
 **		%	One of ER, E, ES, ED, ING, ELY (a suffix)
 **			(Found in right context only)
@@ -660,8 +660,8 @@ static const Rule Z_rules[] =
 const Rule *const Rules[] =
 	{
 	punct_rules,
-	A_rules, B_rules, C_rules, D_rules, E_rules, F_rules, G_rules, 
-	H_rules, I_rules, J_rules, K_rules, L_rules, M_rules, N_rules, 
-	O_rules, P_rules, Q_rules, R_rules, S_rules, T_rules, U_rules, 
+	A_rules, B_rules, C_rules, D_rules, E_rules, F_rules, G_rules,
+	H_rules, I_rules, J_rules, K_rules, L_rules, M_rules, N_rules,
+	O_rules, P_rules, Q_rules, R_rules, S_rules, T_rules, U_rules,
 	V_rules, W_rules, X_rules, Y_rules, Z_rules
 	};

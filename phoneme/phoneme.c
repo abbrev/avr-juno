@@ -17,12 +17,12 @@
 **
 **	Procedure:
 **
-**		Seperate each block of letters (apostrophes included) 
-**		and add a space on each side.  For each unmatched 
-**		letter in the word, look through the rules where the 
-**		text to match starts with the letter in the word.  If 
-**		the text to match is found and the right and left 
-**		context patterns also match, output the phonemes for 
+**		Separate each block of letters (apostrophes included)
+**		and add a space on each side. For each unmatched
+**		letter in the word, look through the rules where the
+**		text to match starts with the letter in the word. If
+**		the text to match is found and the right and left
+**		context patterns also match, output the phonemes for
 **		that rule and skip to the next unmatched letter.
 **
 **
@@ -31,7 +31,7 @@
 **		#	One or more vowels
 **		:	Zero or more consonants
 **		^	One consonant.
-**		.	One of B, D, V, G, J, L, M, N, R, W or Z (voiced 
+**		.	One of B, D, V, G, J, L, M, N, R, W or Z (voiced
 **			consonants)
 **		%	One of ER, E, ES, ED, ING, ELY (a suffix)
 **			(Right context only)
@@ -99,7 +99,7 @@ static int find_rule(const char word[], int index, const Rule *rules)
 				break;
 			}
 
-		if (*match != '\0')	/* found missmatch */
+		if (*match != '\0')	/* found mismatch */
 			continue;
 /*
 printf("\nWord: \"%s\", Index:%4d, Trying: \"%s/%s/%s\" = \"%s\"\n",
@@ -109,12 +109,12 @@ printf("\nWord: \"%s\", Index:%4d, Trying: \"%s/%s/%s\" = \"%s\"\n",
 		if (!leftmatch(rule->left, &word[index-1]))
 			continue;
 /*
-printf("leftmatch(\"%s\",\"...%c\") succeded!\n", rule->left, word[index-1]);
+printf("leftmatch(\"%s\",\"...%c\") succeeded!\n", rule->left, word[index-1]);
 */
 		if (!rightmatch(rule->right, &word[remainder]))
 			continue;
 /*
-printf("rightmatch(\"%s\",\"%s\") succeded!\n", rule->right, &word[remainder]);
+printf("rightmatch(\"%s\",\"%s\") succeeded!\n", rule->right, &word[remainder]);
 */
 /*
 printf("Success: ");

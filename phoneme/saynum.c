@@ -15,7 +15,7 @@
 **
 */
 
-static char *Cardinals[] = 
+static char *Cardinals[] =
 	{
 	" ZERO ",	" ONE ",	" TWO ",		" THREE ",
 	" FOUR ",	" FIVE ",	" SIX ",	" SEVEN ",
@@ -25,23 +25,23 @@ static char *Cardinals[] =
 	" EIGHTEEN ",	" NINETEEN "
 	} ;
 
-static char *Twenties[] = 
+static char *Twenties[] =
 	{
 	" TWENTY ",	" THIRTY ",	" FORTY ",	" FIFTY ",
 	" SIXTY ",	" SEVENTY ",	" EIGHTY ",	" NINETY "
 	} ;
 
-static char *Ordinals[] = 
+static char *Ordinals[] =
 	{
 	" ZEROTH ",	" FIRST ",	" SECOND ",	" THIRD ",
 	" FOURTH ",	" FIFTH ",	" SIXTH ",	" SEVENTH ",
 	" EIGHTH ",		" NINTH ",
-	" TENTH ",	" ELEVENTH ",	" TWELVETH ",	" THIRTEENTH ",
+	" TENTH ",	" ELEVENTH ",	" TWELFTH ",	" THIRTEENTH ",
 	" FOURTEENTH ",	" FIFTEENTH ", 	" SIXTEENTH ",	" SEVENTEENTH ",
 	" EIGHTEENTH ",	" NINETEENTH "
 	} ;
 
-static char *Ord_twenties[] = 
+static char *Ord_twenties[] =
 	{
 	" TWENTIETH ",	" THIRTIETH ",	" FORTIETH ",	" FIFTIETH ",
 	" SIXTIETH ",	" SEVENTIETH ",	" EIGHTIETH ",	" NINETIETH "
@@ -49,7 +49,7 @@ static char *Ord_twenties[] =
 
 
 /*
-** Translate a number to phonemes.  This version is for CARDINAL numbers.
+** Translate a number to phonemes. This version is for CARDINAL numbers.
 **	 Note: this is recursive.
 */
 void say_cardinal(long svalue)
@@ -88,7 +88,7 @@ void say_cardinal(long svalue)
 		}
 
 	/* Thousands 1000..1099 2000..99999 */
-	/* 1100 to 1999 is eleven-hunderd to ninteen-hunderd */
+	/* 1100 to 1999 is eleven-hundred to nineteen-hundred */
 	if ((value >= 1000L && value <= 1099L) || value >= 2000L)
 		{
 		say_cardinal(value/1000L);
@@ -119,11 +119,11 @@ void say_cardinal(long svalue)
 
 	xlate_word(Cardinals[value]);
 	return;
-	} 
+	}
 
 
 /*
-** Translate a number to phonemes.  This version is for ORDINAL numbers.
+** Translate a number to phonemes. This version is for ORDINAL numbers.
 **	 Note: this is recursive.
 */
 void say_ordinal(long svalue)
@@ -169,7 +169,7 @@ void say_ordinal(long svalue)
 		}
 
 	/* Thousands 1000..1099 2000..99999 */
-	/* 1100 to 1999 is eleven-hunderd to ninteen-hunderd */
+	/* 1100 to 1999 is eleven-hundred to nineteen-hundred */
 	if ((value >= 1000L && value <= 1099L) || value >= 2000L)
 		{
 		say_cardinal(value/1000L);
@@ -209,4 +209,4 @@ void say_ordinal(long svalue)
 
 	xlate_word(Ordinals[value]);
 	return;
-	} 
+	}
