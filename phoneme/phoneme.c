@@ -154,7 +154,7 @@ static bool leftmatch(const char *pattern, const char *context)
 	for (; count > 0; pat--, count--)
 		{
 		/* First check for simple text or space */
-		if (isalpha(*pat) || *pat == '\'' || *pat == ' ')
+		if (isalpha(*pat) || strchr(" '", *pat))
 			{
 			if (*pat != *text)
 				{
@@ -229,7 +229,7 @@ static bool rightmatch(const char *pattern, const char *context)
 	for (pat = pattern; *pat != '\0'; pat++)
 		{
 		/* First check for simple text or space */
-		if (isalpha(*pat) || *pat == '\'' || *pat == ' ')
+		if (isalpha(*pat) || strchr(" '", *pat))
 			{
 			if (*pat != *text)
 				{
@@ -278,44 +278,24 @@ static bool rightmatch(const char *pattern, const char *context)
 			break;
 
 		case '%':	/* ER, E, ES, ED, ING, ELY (a suffix) */
-			if (*text == 'E')
+			if (strncmp(text, "ING", 3) == 0 ||
+			    strncmp(text, "ELY", 3) == 0)
 				{
-				text++;
-				if (*text == 'L')
-					{
-					text++;
-					if (*text == 'Y')
-						{
-						text++;
-						break;
-						}
-					else
-						{
-						text--; /* Don't gobble L */
-						break;
-						}
-					}
-				else
-				if (strchr("RSD", *text))
-					text++;
+				text += 3;
 				break;
 				}
-			else
-			if (*text == 'I')
+			if (strncmp(text, "ER", 2) == 0 ||
+			    strncmp(text, "ES", 2) == 0 ||
+			    strncmp(text, "ED", 2) == 0)
 				{
-				text++;
-				if (*text == 'N')
-					{
-					text++;
-					if (*text == 'G')
-						{
-						text++;
-						break;
-						}
-					}
-				return false;
+				text += 2;
+				break;
 				}
-			else
+			if (*text == 'E')
+				{
+				text += 1;
+				break;
+				}
 			return false;
 
 		default:
